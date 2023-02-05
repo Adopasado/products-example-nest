@@ -46,7 +46,7 @@ export class ProductController {
 
   //Delete product by @Param
   @Delete('/delete/:productID')
-  async deleteProduct(@Res() res, @Param('productID') productID) {
+  async deleteProductByParam(@Res() res, @Param('productID') productID) {
     const deletedProduct = await this.productService.deleteProduct(productID);
 
     if (!deletedProduct) throw new NotFoundException('Product does not exist');
@@ -68,11 +68,31 @@ export class ProductController {
     });
   }
 
+  //Update product by @Param
   @Put('/update/:productID')
-  async updateProduct(
+  async updateProductByParam(
     @Res() res,
     @Body() createProductDTO: CreateProductDTO,
     @Param('productID') productID,
+  ) {
+    const updatedProduct = await this.productService.updateProduct(
+      productID,
+      createProductDTO,
+    );
+
+    if (!updatedProduct) throw new NotFoundException('Product does not exist');
+    return res.status(HttpStatus.OK).json({
+      message: 'Product updated',
+      product: updatedProduct,
+    });
+  }
+
+  //Update product by @Query
+  @Put('/update')
+  async updateProductByQuery(
+    @Res() res,
+    @Body() createProductDTO: CreateProductDTO,
+    @Query('productID') productID,
   ) {
     const updatedProduct = await this.productService.updateProduct(
       productID,
